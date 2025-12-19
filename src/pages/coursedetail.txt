@@ -1,0 +1,1269 @@
+// import React, { useEffect, useState } from 'react';
+// import { useParams, Link, useNavigate } from 'react-router-dom';
+
+// /**
+//  * CourseDetailPage
+//  * - Shows a full roadmap (modules -> lessons)
+//  * - Enroll button directs user to /pricing or /lifetime depending on course.planType
+//  *
+//  * Replace sampleCourses with your real API/fetch logic where noted.
+//  */
+
+// const sampleCourses = {
+//   'react-nextjs': {
+//     title: 'Mastering React & Next.js',
+//     description: 'Build scalable high-performance web applications using React and Next.js.',
+//     duration: '20 Hrs',
+//     instructor: 'Davidson Team',
+//     planType: 'monthly', // 'monthly' | 'lifetime' | 'premium' (used to decide where to send Enroll)
+//     outline: [
+//       {
+//         title: 'Getting Started',
+//         summary: 'Setup, tooling, and project scaffolding.',
+//         lessons: [
+//           'Introduction & Course Overview',
+//           'Tooling: Node, npm, VS Code',
+//           'Project Scaffolding with Create React App and Next.js',
+//         ],
+//       },
+//       {
+//         title: 'React Fundamentals',
+//         summary: 'Core React concepts and hooks.',
+//         lessons: [
+//           'JSX & Components',
+//           'State & Props',
+//           'useEffect & Lifecycle',
+//           'useContext and simple state sharing',
+//         ],
+//       },
+//       {
+//         title: 'Advanced Patterns & Next.js',
+//         summary: 'Routing, data fetching, and SSR/SSG.',
+//         lessons: [
+//           'Next.js Pages & Routing',
+//           'Data Fetching (getStaticProps, getServerSideProps)',
+//           'API routes & Middleware',
+//           'Performance & Image Optimization',
+//         ],
+//       },
+//       {
+//         title: 'Deployment & Real-World',
+//         summary: 'Deploy and CI + production topics.',
+//         lessons: [
+//           'Testing basics',
+//           'Deploying to Vercel',
+//           'Monitoring & Performance',
+//           'Building your portfolio project',
+//         ],
+//       },
+//     ],
+//   },
+
+//   'data-science-python': {
+//     title: 'Data Science with Python',
+//     description: 'Learn Python, Pandas, NumPy, and Scikit-learn.',
+//     duration: '30 Hrs',
+//     instructor: 'Data Team',
+//     planType: 'monthly',
+//     outline: [
+//       { title: 'Python Basics', summary: '', lessons: ['Syntax, types, functions'] },
+//       { title: 'Data Wrangling', summary: '', lessons: ['Pandas: Series & DataFrame', 'Cleaning & Merging'] },
+//     ],
+//   },
+
+//   'ai-machine-learning': {
+//     title: 'AI & Machine Learning Deep Dive',
+//     description: 'Hands-on projects with TensorFlow & PyTorch.',
+//     duration: '45 Hrs',
+//     instructor: 'AI Team',
+//     planType: 'lifetime',
+//     outline: [{ title: 'NN Fundamentals', summary: '', lessons: ['Perceptron', 'Backprop', 'Optimizers'] }],
+//   },
+// };
+
+// const CourseDetailPage = () => {
+//   const { courseId } = useParams();
+//   const navigate = useNavigate();
+
+//   const [course, setCourse] = useState(null);
+//   const [loading, setLoading] = useState(true);
+//   const [openModules, setOpenModules] = useState({}); // tracks which module indexes are expanded
+
+//   useEffect(() => {
+//     setLoading(true);
+
+//     // TODO: Replace this with fetch(`/api/courses/${courseId}`) for real data:
+//     const found = sampleCourses[courseId];
+//     if (found) {
+//       setCourse(found);
+//     } else {
+//       setCourse(null);
+//     }
+//     setLoading(false);
+//   }, [courseId]);
+
+//   const toggleModule = (idx) =>
+//     setOpenModules((s) => ({ ...s, [idx]: !s[idx] }));
+
+//   const handleEnroll = () => {
+//     // Decide where to send the user based on planType
+//     // - lifetime -> go to Lifetime Access page
+//     // - monthly/premium -> go to Pricing (preselect plan via query param)
+//     // You can also navigate to /enroll or /checkout if you have those routes
+//     if (!course) return;
+
+//     const { planType } = course;
+
+//     if (planType === 'lifetime') {
+//       // redirect to lifetime access page (absolute path)
+//       navigate(`/lifetime?course=${encodeURIComponent(courseId)}`);
+//       return;
+//     }
+
+//     // default: go to pricing and pass the course slug so pricing can preselect a plan or highlight course
+//     navigate(`/pricing?plan=${encodeURIComponent(courseId)}&from=course`);
+//   };
+
+//   if (loading) {
+//     return (
+//       <div className="min-h-screen bg-academy-bg text-white flex items-center justify-center p-8">
+//         <div>Loading…</div>
+//       </div>
+//     );
+//   }
+
+//   if (!course) {
+//     return (
+//       <div className="min-h-screen bg-academy-bg text-white pt-24 px-4">
+//         <div className="max-w-4xl mx-auto text-center">
+//           <h2 className="text-3xl font-extrabold mb-4">Course not found</h2>
+//           <p className="text-gray-400 mb-6">We couldn't find the course "{courseId}".</p>
+//           <Link to="/courses" className="px-4 py-2 rounded-md bg-gray-700 text-white">Back to courses</Link>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="min-h-screen bg-academy-bg text-white pt-24 px-4">
+//       <div className="max-w-4xl mx-auto space-y-8">
+//         {/* Header */}
+//         <div>
+//           <h1 className="text-4xl md:text-5xl font-extrabold mb-2">{course.title}</h1>
+//           <p className="text-lg text-gray-300 mb-4">{course.description}</p>
+
+//           <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400">
+//             <div><strong>Duration:</strong> {course.duration}</div>
+//             <div><strong>Instructor:</strong> {course.instructor}</div>
+//             <div className="ml-auto">
+//               <button
+//                 onClick={handleEnroll}
+//                 className="inline-flex items-center px-5 py-3 bg-orange-600 text-black font-semibold rounded-lg shadow hover:opacity-95"
+//               >
+//                 Enroll
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* Roadmap / Outline */}
+//         <section className="rounded-xl bg-gray-900 p-6 border border-gray-800">
+//           <h2 className="text-2xl font-bold mb-4">Course Roadmap</h2>
+//           <p className="text-gray-300 mb-6">This course is broken into modules. Expand each module to see lessons and the full curriculum.</p>
+
+//           <div className="space-y-4">
+//             {course.outline.map((mod, idx) => (
+//               <div key={idx} className="bg-gray-800 p-4 rounded-lg border border-gray-700">
+//                 <div className="flex items-start justify-between">
+//                   <div>
+//                     <h3 className="text-lg font-semibold">{mod.title}</h3>
+//                     {mod.summary && <p className="text-sm text-gray-400">{mod.summary}</p>}
+//                   </div>
+//                   <div className="flex items-center space-x-3">
+//                     <button
+//                       onClick={() => toggleModule(idx)}
+//                       className="inline-flex items-center px-3 py-2 text-sm rounded-md bg-gray-700 hover:bg-gray-600"
+//                       aria-expanded={!!openModules[idx]}
+//                     >
+//                       {openModules[idx] ? 'Collapse' : 'Expand'}
+//                     </button>
+//                   </div>
+//                 </div>
+
+//                 {openModules[idx] && (
+//                   <ul className="mt-3 space-y-2 text-sm text-gray-300 list-inside list-disc pl-4">
+//                     {mod.lessons.map((lesson, i) => (
+//                       <li key={i} className="flex items-center justify-between">
+//                         <span>{lesson}</span>
+//                         {/* optional: lesson duration / badge */}
+//                         <span className="text-xs text-gray-400">✓</span>
+//                       </li>
+//                     ))}
+//                   </ul>
+//                 )}
+//               </div>
+//             ))}
+//           </div>
+//         </section>
+
+//         {/* Additional CTA / Resources */}
+//         <div className="rounded-xl bg-gray-900 p-6 border border-gray-800">
+//           <h3 className="text-xl font-semibold mb-2">Ready to start?</h3>
+//           <p className="text-gray-300 mb-4">Choose a plan on the pricing page and enroll — or get lifetime access if you prefer a one-time purchase.</p>
+//           <div className="flex gap-3">
+//             <button onClick={handleEnroll} className="px-5 py-3 bg-orange-600 text-black font-semibold rounded-lg">Enroll / View Plans</button>
+//             <Link to="/courses" className="px-4 py-3 bg-gray-700 text-white rounded-md">Back to courses</Link>Express Setup
+
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default CourseDetailPage;
+
+// import React, { useEffect, useState } from 'react';
+// import { useParams, Link, useNavigate } from 'react-router-dom';
+// import { LayoutList } from 'lucide-react';
+
+// --- Centralized Course Data (SLUG IS THE KEY) ---
+// const sampleCourses = {
+//     // 1. WEB DEV (Fixed slug)
+//     'react-nextjs': {
+//         title: 'Mastering React & Next.js',
+//         description:
+//             'Build scalable high-performance web applications using React and Next.js.',
+//         duration: '20 Hrs',
+//         instructor: 'Davidson Team',
+//         planType: 'monthly', // 'monthly' | 'lifetime' | 'premium'
+//         outline: [
+//             {
+//                 title: 'Getting Started',
+//                 summary: 'Setup, tooling, and project scaffolding.',
+//                 lessons: [
+//                     'Introduction & Course Overview',
+//                     'Tooling: Node, npm, VS Code',
+//                 ],
+//             },
+//             {
+//                 title: 'React Fundamentals',
+//                 summary: 'Core React concepts and hooks.',
+//                 lessons: [
+//                     'JSX & Components',
+//                     'State & Props',
+//                     'useEffect & Lifecycle',
+//                 ],
+//             },
+//             {
+//                 title: 'Advanced Patterns & Next.js',
+//                 summary: 'Routing, data fetching, and SSR/SSG.',
+//                 lessons: [
+//                     'Next.js Pages & Routing',
+//                     'Data Fetching (getStaticProps)',
+//                     'API routes & Middleware',
+//                 ],
+//             },
+//             {
+//                 title: 'Deployment & Real-World',
+//                 summary: 'Deploy and CI + production topics.',
+//                 lessons: [
+//                     'Testing basics',
+//                     'Deploying to Vercel',
+//                     'Monitoring & Performance',
+//                 ],
+//             },
+//         ],
+//     },
+
+//     // 2. DATA SCIENCE
+//     'data-science': {
+//         title: 'Data Science with Python',
+//         description:
+//             'Learn Python, Pandas, NumPy, and Scikit-learn to clean, analyze, and visualize complex datasets.',
+//         duration: '35 Hrs',
+//         instructor: 'Data Team',
+//         planType: 'monthly',
+//         outline: [
+//             {
+//                 title: 'Python Basics',
+//                 summary: 'Core concepts for data work.',
+//                 lessons: ['Syntax, types, functions'],
+//             },
+//             {
+//                 title: 'Data Wrangling',
+//                 summary: 'Cleaning and transforming data with Pandas.',
+//                 lessons: ['Pandas: Series & DataFrame', 'Cleaning & Merging'],
+//             },
+//             {
+//                 title: 'Visualization',
+//                 summary: 'Creating meaningful plots and charts.',
+//                 lessons: ['Matplotlib and Seaborn'],
+//             },
+//         ],
+//     },
+
+//     // 3. AI/ML
+//     'ai-machine-learning': {
+//         title: 'AI & Machine Learning Deep Dive',
+//         description: 'Hands-on projects with TensorFlow & PyTorch.',
+//         duration: '45 Hrs',
+//         instructor: 'AI Team',
+//         planType: 'lifetime',
+//         outline: [
+//             {
+//                 title: 'NN Fundamentals',
+//                 summary: 'The building blocks of neural networks.',
+//                 lessons: ['Perceptron', 'Backprop', 'Optimizers'],
+//             },
+//             {
+//                 title: 'TensorFlow Projects',
+//                 summary: 'Applying models to real-world problems.',
+//                 lessons: ['Image Classification', 'Time Series Analysis'],
+//             },
+//         ],
+//     },
+
+//     // 4. FULL-STACK NODE.JS
+//     'full-stack-node-js': {
+//         title: 'Full-Stack Node.js Development',
+//         description:
+//             'Develop robust APIs and web servers using Node.js, Express, and MongoDB (MERN stack).',
+//         duration: '25 Hrs',
+//         instructor: 'Node Team',
+//         planType: 'monthly',
+//         outline: [
+//             {
+//                 title: 'API Design',
+//                 summary: 'Building RESTful services.',
+//                 lessons: ['Express Setup', 'Routing', 'Middleware'],
+//             },
+//         ],
+//     },
+
+//     // 5. ADVANCED JAVASCRIPT
+//     'advanced-javascript': {
+//         title: 'Advanced JavaScript (ES6+)',
+//         description:
+//             'Deep dive into modern JavaScript features, asynchronous programming, and best practices.',
+//         duration: '15 Hrs',
+//         instructor: 'JS Team',
+//         planType: 'monthly',
+//         outline: [
+//             {
+//                 title: 'Asynchronous JS',
+//                 summary: 'Promises and Async/Await.',
+//                 lessons: ['Promises', 'Async/Await', 'Error Handling'],
+//             },
+//         ],
+//     },
+
+//     // 6. DATABASES
+//     'sql-fundamentals': {
+//         title: 'SQL and Database Fundamentals',
+//         description:
+//             'Master relational databases, advanced SQL queries, indexing, and database design principles.',
+//         duration: '10 Hrs',
+//         instructor: 'DB Team',
+//         planType: 'monthly',
+//         outline: [
+//             {
+//                 title: 'Querying',
+//                 summary: 'SELECT, JOIN, and functions.',
+//                 lessons: ['Basic Queries', 'Advanced Joins', 'Indexing'],
+//             },
+//         ],
+//     },
+
+//     // 7. DIGITAL MARKETING
+//     'digital-marketing-mastery': {
+//         title: 'Digital Marketing Mastery',
+//         description:
+//             'Learn SEO, paid advertising (PPC), social media strategies, and email marketing for business growth.',
+//         duration: '18 Hrs',
+//         instructor: 'Marketing Team',
+//         planType: 'monthly',
+//         outline: [
+//             {
+//                 title: 'SEO Basics',
+//                 summary: 'On-page and off-page optimization.',
+//                 lessons: ['Keyword Research', 'Technical SEO'],
+//             },
+//         ],
+//     },
+
+//     // 8. COMPUTER BASICS
+//     'computer-basics': {
+//         title: 'Computer Basics and Operations',
+//         description:
+//             'Essential skills for navigating operating systems, file management, and core productivity software.',
+//         duration: '8 Hrs',
+//         instructor: 'IT Team',
+//         planType: 'monthly',
+//         outline: [
+//             {
+//                 title: 'OS Navigation',
+//                 summary: 'Windows and macOS basics.',
+//                 lessons: ['File Management', 'Basic Security'],
+//             },
+//         ],
+//     },
+
+//     // 9. VIDEO EDITING
+//     'professional-video-editing': {
+//         title: 'Professional Video Editing (Premiere Pro)',
+//         description:
+//             'Edit high-quality videos for social media and professional projects using Adobe Premiere Pro.',
+//         duration: '16 Hrs',
+//         instructor: 'Media Team',
+//         planType: 'monthly',
+//         outline: [
+//             {
+//                 title: 'Timeline & Tools',
+//                 summary: 'Getting started with Premiere Pro.',
+//                 lessons: ['Basic Cuts', 'Color Correction'],
+//             },
+//         ],
+//     },
+
+//     // 10. GRAPHICS DESIGN
+//     'graphics-design-fundamentals': {
+//         title: 'Graphics Design Fundamentals',
+//         description:
+//             'Master foundational design principles, typography, and color theory using industry-standard tools.',
+//         duration: '22 Hrs',
+//         instructor: 'Design Team',
+//         planType: 'monthly',
+//         outline: [
+//             {
+//                 title: 'Design Principles',
+//                 summary: 'Theory and application.',
+//                 lessons: ['Typography', 'Color Theory'],
+//             },
+//         ],
+//     },
+
+//     // 11. CYBER SECURITY
+//     'ethical-hacking': {
+//         title: 'Ethical Hacking & Cyber Security',
+//         description:
+//             'Understand penetration testing, vulnerability analysis, and network defense strategies.',
+//         duration: '30 Hrs',
+//         instructor: 'Security Team',
+//         planType: 'lifetime',
+//         outline: [
+//             {
+//                 title: 'Vulnerability Analysis',
+//                 summary: 'Finding and fixing weaknesses.',
+//                 lessons: ['Scanning Tools', 'Reporting'],
+//             },
+//         ],
+//     },
+
+//     // 12. NETWORKING
+//     'networking-fundamentals': {
+//         title: 'Networking Fundamentals (Cisco)',
+//         description:
+//             'Learn the core concepts of TCP/IP, routing, switching, and network architecture.',
+//         duration: '24 Hrs',
+//         instructor: 'Cisco Team',
+//         planType: 'monthly',
+//         outline: [
+//             {
+//                 title: 'TCP/IP',
+//                 summary: 'Protocol stack and addressing.',
+//                 lessons: ['IP Addressing', 'Subnetting'],
+//             },
+//         ],
+//     },
+
+//     // 13. BLOCKCHAIN
+//     'blockchain-technology': {
+//         title: 'Blockchain Technology & Crypto',
+//         description:
+//             'Explore decentralized ledgers, smart contracts (Solidity), and the foundational technology of Web3.',
+//         duration: '14 Hrs',
+//         instructor: 'Web3 Team',
+//         planType: 'lifetime',
+//         outline: [
+//             {
+//                 title: 'Smart Contracts',
+//                 summary: 'Coding with Solidity.',
+//                 lessons: ['Solidity Basics', 'Deploying Contracts'],
+//             },
+//         ],
+//     },
+
+//     // 14. FOREX TRADING
+//     'forex-trading-automation': {
+//         title: 'Forex Trading Automation (Python)',
+//         description:
+//             'Use Python to build algorithmic trading bots and perform quantitative market analysis.',
+//         duration: '15 Hrs',
+//         instructor: 'Finance Team',
+//         planType: 'lifetime',
+//         outline: [
+//             {
+//                 title: 'Python for Finance',
+//                 summary: 'Data acquisition and analysis.',
+//                 lessons: ['Data Scraping', 'Backtesting'],
+//             },
+//         ],
+//     },
+
+//     // 15. ADVANCED WEB DEV
+//     'web-dev-full-stack-advanced': {
+//         title: 'Web Development Full Stack (Advanced)',
+//         description:
+//             'Comprehensive program covering both front-end and back-end frameworks for job readiness.',
+//         duration: '50 Hrs',
+//         instructor: 'Senior Dev Team',
+//         planType: 'monthly',
+//         outline: [
+//             {
+//                 title: 'Advanced Frameworks',
+//                 summary: 'Scaling and performance.',
+//                 lessons: ['Microservices', 'Caching'],
+//             },
+//         ],
+//     },
+
+//     // 16. DATA ANALYSIS
+//     'data-analysis-visualization': {
+//         title: 'Data Analysis & Visualization (Power BI)',
+//         description:
+//             'Transform raw data into actionable insights using advanced Excel, SQL, and Power BI/Tableau.',
+//         duration: '28 Hrs',
+//         instructor: 'Data Vis Team',
+//         planType: 'monthly',
+//         outline: [
+//             {
+//                 title: 'Power BI',
+//                 summary: 'Building dashboards.',
+//                 lessons: ['Data Modeling', 'Visualizations'],
+//             },
+//         ],
+//     },
+
+//     // 17. MOBILE APP DEV
+//     'mobile-app-development': {
+//         title: 'Mobile App Development (Native & Hybrid)',
+//         description:
+//             'Build native iOS/Android apps with Swift/Kotlin and hybrid apps with React Native/Flutter.',
+//         duration: '45 Hrs',
+//         instructor: 'Mobile Team',
+//         planType: 'lifetime',
+//         outline: [
+//             {
+//                 title: 'React Native',
+//                 summary: 'Cross-platform basics.',
+//                 lessons: ['Component Structure', 'State Management'],
+//             },
+//         ],
+//     },
+
+//     // 18. GAME DEV
+//     'game-development': {
+//         title: 'Game Development (Unity-C-Sharp)',
+//         description:
+//             'Create 2D and 3D games from concept to deployment using the Unity game engine and C# scripting.',
+//         duration: '38 Hrs',
+//         instructor: 'Gaming Team',
+//         planType: 'lifetime',
+//         outline: [
+//             {
+//                 title: 'Unity Engine',
+//                 summary: 'Interface and scripting.',
+//                 lessons: ['2D Physics', '3D Movement'],
+//             },
+//         ],
+//     },
+// };
+
+// const CourseDetailPage = () => {
+//     const { courseId } = useParams();
+//     // CRITICAL FIX: Ensure useNavigate is imported and used
+//     const navigate = useNavigate();
+
+//     const [course, setCourse] = useState(null);
+//     const [loading, setLoading] = useState(true);
+//     const [openModules, setOpenModules] = useState({}); // tracks which module indexes are expanded
+
+//     useEffect(() => {
+//         setLoading(true);
+
+//         // This lookup now works for all courses listed above!
+//         const found = sampleCourses[courseId];
+//         if (found) {
+//             setCourse(found);
+//             // Optionally initialize the first module open
+//             setOpenModules({ 0: true });
+//         } else {
+//             setCourse(null);
+//         }
+//         setLoading(false);
+//     }, [courseId]);
+
+//     const toggleModule = (idx) =>
+//         setOpenModules((s) => ({ ...s, [idx]: !s[idx] }));
+
+//     const handleEnroll = () => {
+//         if (!course) return;
+
+//         const { planType } = course;
+
+//         if (planType === 'lifetime') {
+//             // Redirect to lifetime access page
+//             navigate(`/lifetime?course=${encodeURIComponent(courseId)}`);
+//             return;
+//         }
+
+//         // default: go to pricing and pass the course slug
+//         navigate(`/pricing?plan=${encodeURIComponent(courseId)}&from=course`);
+//     };
+
+//     if (loading) {
+//         return (
+//             <div className="min-h-screen bg-academy-bg text-white flex items-center justify-center p-8">
+//                 <div>Loading course details...</div>
+//             </div>
+//         );
+//     }
+
+//     if (!course) {
+//         return (
+//             <div className="min-h-screen bg-academy-bg text-white pt-24 px-4">
+//                 <div className="max-w-4xl mx-auto text-center p-8 bg-gray-900 rounded-xl shadow-xl border border-gray-700">
+//                     <h2 className="text-3xl font-extrabold mb-4 text-red-400">
+//                         Course not found
+//                     </h2>
+//                     <p className="text-gray-400 mb-6">
+//                         We couldn't find the course with the ID: <strong className="text-academy-accent">{courseId}</strong>.
+//                     </p>
+//                     <Link
+//                         to="/courses"
+//                         className="px-4 py-2 rounded-md bg-academy-accent text-black font-semibold hover:opacity-90 transition"
+//                     >
+//                         Back to the Full Catalog
+//                     </Link>
+//                 </div>
+//             </div>
+//         );
+//     }
+
+//     // Determine the color/style for the enrollment button based on planType
+//     const isLifetime = course.planType === 'lifetime';
+//     const enrollButtonClass = isLifetime
+//         ? 'px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-lg hover:bg-indigo-700 transition duration-300'
+//         : 'px-6 py-3 bg-academy-accent text-black font-semibold rounded-lg shadow-lg hover:opacity-95 transition duration-300';
+//     const planText = isLifetime ? 'Get Lifetime Access' : 'Start with Monthly Plan';
+
+//     return (
+//         <div className="min-h-screen bg-academy-bg text-white pt-24 px-4">
+//             <div className="max-w-5xl mx-auto space-y-12 py-10">
+
+//                 {/* Header Section */}
+//                 <div className="bg-gray-900 p-8 rounded-xl shadow-2xl border border-gray-700">
+//                     <p className="text-sm font-semibold uppercase tracking-wider text-academy-accent mb-2">
+//                         {course.instructor} presents
+//                     </p>
+//                     <h1 className="text-4xl md:text-5xl font-extrabold mb-3 leading-tight">
+//                         {course.title}
+//                     </h1>
+//                     <p className="text-xl text-gray-300 max-w-4xl">{course.description}</p>
+
+//                     <div className="flex flex-wrap items-center mt-6 gap-6 text-sm text-gray-400">
+//                         <div className="flex items-center space-x-2">
+//                             <span className="font-medium text-white">{course.duration}</span>
+//                             <span>Total Course Time</span>
+//                         </div>
+//                         <div className="flex items-center space-x-2">
+//                             <span className={`font-medium ${isLifetime ? 'text-indigo-400' : 'text-academy-accent'}`}>{course.planType.toUpperCase()}</span>
+//                             <span>Enrollment Type</span>
+//                         </div>
+//                     </div>
+
+//                     <div className="mt-8">
+//                         <button
+//                             onClick={handleEnroll}
+//                             className={enrollButtonClass}
+//                         >
+//                             {planText}
+//                         </button>
+//                     </div>
+//                 </div>
+
+//                 {/* Roadmap / Outline Section */}
+//                 <section className="rounded-xl bg-gray-900 p-8 border border-gray-700 shadow-2xl">
+//                     <h2 className="text-3xl font-bold mb-6 flex items-center space-x-3 text-academy-accent">
+//                         <LayoutList className="w-8 h-8" />
+//                         <span>Detailed Course Roadmap ({course.outline.length} Modules)</span>
+//                     </h2>
+//                     <p className="text-gray-400 mb-8">
+//                         The full curriculum is broken down by module. Click to expand and see the individual lessons.
+//                     </p>
+
+//                     <div className="space-y-4">
+//                         {course.outline.map((mod, idx) => (
+//                             <div
+//                                 key={idx}
+//                                 className="bg-gray-800 rounded-lg shadow-md overflow-hidden transition-all duration-300"
+//                             >
+//                                 <div
+//                                     className="flex items-start justify-between p-5 cursor-pointer hover:bg-gray-700/70"
+//                                     onClick={() => toggleModule(idx)}
+//                                 >
+//                                     <div>
+//                                         <h3 className="text-xl font-semibold text-white">
+//                                             Module {idx + 1}: {mod.title}
+//                                         </h3>
+//                                         {mod.summary && (
+//                                             <p className="text-sm text-gray-400 mt-1">
+//                                                 {mod.summary}
+//                                             </p>
+//                                         )}
+//                                     </div>
+//                                     <button
+//                                         className="p-1 text-gray-400 hover:text-white transition duration-150"
+//                                         aria-expanded={!!openModules[idx]}
+//                                     >
+//                                         {/* Simple Rotate Arrow Icon */}
+//                                         <svg
+//                                             xmlns="http://www.w3.org/2000/svg"
+//                                             width="24"
+//                                             height="24"
+//                                             viewBox="0 0 24 24"
+//                                             fill="none"
+//                                             stroke="currentColor"
+//                                             strokeWidth="2"
+//                                             strokeLinecap="round"
+//                                             strokeLinejoin="round"
+//                                             className={`w-6 h-6 transition-transform duration-300 ${openModules[idx] ? 'rotate-180 text-academy-accent' : 'rotate-0'}`}
+//                                         >
+//                                             <path d="m6 9 6 6 6-6" />
+//                                         </svg>
+//                                     </button>
+//                                 </div>
+
+//                                 {/* Collapsible Lessons Content */}
+//                                 {openModules[idx] && (
+//                                     <div className="p-5 pt-0 border-t border-gray-700">
+//                                         <ul className="space-y-2 text-base text-gray-300 list-none">
+//                                             {mod.lessons.map((lesson, i) => (
+//                                                 <li
+//                                                     key={i}
+//                                                     className="flex items-center justify-between border-b border-gray-700/50 py-2 last:border-b-0"
+//                                                 >
+//                                                     <span className="flex items-center">
+//                                                         <span className="text-green-400 text-lg mr-3">✓</span>
+//                                                         {lesson}
+//                                                     </span>
+//                                                     <span className="text-xs text-gray-500 italic">
+//                                                         {/* Placeholder for lesson duration if needed, currently empty */}
+//                                                     </span>
+//                                                 </li>
+//                                             ))}
+//                                         </ul>
+//                                     </div>
+//                                 )}
+//                             </div>
+//                         ))}
+//                     </div>
+//                 </section>
+
+//                 {/* Final Call to Action */}
+//                 <div className="rounded-xl bg-gray-900 p-6 border border-gray-700 text-center">
+//                     <h3 className="text-2xl font-bold mb-3 text-white">Secure Your Spot Now!</h3>
+//                     <p className="text-gray-400 mb-6 max-w-2xl mx-auto">
+//                         Ready to start mastering {course.title}? Click below to select your plan and begin your journey immediately.
+//                     </p>
+//                     <div className="flex justify-center gap-4">
+//                         <button
+//                             onClick={handleEnroll}
+//                             className={enrollButtonClass}
+//                         >
+//                             {planText}
+//                         </button>
+//                         <Link
+//                             to="/courses"
+//                             className="px-6 py-3 bg-gray-700 text-white font-semibold rounded-lg hover:bg-gray-600 transition duration-300"
+//                         >
+//                             Explore More Courses
+//                         </Link>
+//                     </div>
+//                 </div>
+//             </div>
+//         </div>
+//     );
+// };
+
+// export default CourseDetailPage;
+///////////////////////////////////
+
+// import React, { useEffect, useState } from 'react';
+// import { useParams, Link } from 'react-router-dom';
+// import {
+//    BookOpen,
+//    Clock,
+//    Zap,
+//    Star,
+//    LayoutList,
+//    CheckCircle,
+// } from 'lucide-react';
+
+// // --- Centralized Course Data (SLUG MUST BE THE KEY) ---
+// const sampleCourses = {
+//    // CRITICAL: Key must match the slug in CoursesSection and the URL parameter
+//    'react-nextjs': {
+//       title: 'Mastering React & Next.js',
+//       description:
+//          'Build scalable, high-performance web applications using the latest features of React, Hooks, and Next.js, focusing on server-side rendering and static generation.',
+//       instructor: 'Dr. Evelyn Reed',
+//       duration: '20 Hrs',
+//       rating: '4.9',
+//       students: '1.2K',
+//       price: 99.99,
+//       modules: [
+//          'Introduction to Modern React (v18+)',
+//          'React Hooks: useState, useEffect, useContext',
+//          'Advanced State Management (Zustand/Redux)',
+//          'Next.js Fundamentals (Pages & Routing)',
+//          'Server Components & Data Fetching',
+//          'Deployment and Performance Optimization',
+//       ],
+//       prerequisites: ['HTML', 'CSS', 'JavaScript ES6+'],
+//    },
+//    'data-science': {
+//       title: 'Data Science with Python',
+//       description:
+//          'Learn Python, Pandas, NumPy, and Scikit-learn to clean, analyze, and visualize complex datasets for machine learning applications.',
+//       instructor: 'Prof. Alistair Chen',
+//       duration: '35 Hrs',
+//       rating: '4.8',
+//       students: '850',
+//       price: 149.99,
+//       modules: [
+//          'Python Basics for Data Analysis',
+//          'Data Manipulation with Pandas',
+//          'Scientific Computing with NumPy',
+//          'Data Visualization (Matplotlib & Seaborn)',
+//          'Introduction to Machine Learning (Scikit-learn)',
+//          'Model Evaluation and Deployment',
+//       ],
+//       prerequisites: ['Basic Math/Statistics'],
+//    },
+//    'node-js-full-stack': {
+//       title: 'Full-Stack Node.js Development',
+//       description:
+//          'Develop robust APIs and web servers using Node.js, Express, and MongoDB (MERN stack). Master authentication, testing, and deployment.',
+//       instructor: 'James Davidson',
+//       duration: '25 Hrs',
+//       rating: '4.7',
+//       students: '1.5K',
+//       price: 129.99,
+//       modules: [
+//          'Node.js and npm Essentials',
+//          'Building APIs with Express',
+//          'MongoDB and Mongoose ODM',
+//          'User Authentication (JWT)',
+//          'Testing APIs (Jest/Supertest)',
+//          'Deployment to Cloud Platforms',
+//       ],
+//       prerequisites: ['Advanced JavaScript (ES6+)'],
+//    },
+//    // Add more courses here following the exact slug key convention
+// };
+
+// const CourseDetailPage = () => {
+//    // CRITICAL: Must use 'courseId' to match the route parameter /courses/:courseId
+//    const { courseId } = useParams();
+//    const [course, setCourse] = useState(null);
+//    const [loading, setLoading] = useState(true);
+
+//    useEffect(() => {
+//       setLoading(true);
+//       // Look up the course using the ID from the URL as the dictionary key
+//       const foundCourse = sampleCourses[courseId];
+
+//       if (foundCourse) {
+//          setCourse(foundCourse);
+//       } else {
+//          setCourse(null);
+//       }
+//       setLoading(false);
+//    }, [courseId]);
+
+//    if (loading) {
+//       return (
+//          <div className="pt-24 min-h-screen text-center text-white">
+//             <p>Loading course details...</p>
+//          </div>
+//       );
+//    }
+
+//    if (!course) {
+//       return (
+//          <div className="pt-24 min-h-screen max-w-3xl mx-auto p-6 bg-gray-900 rounded-xl shadow-2xl mt-12">
+//             <h1 className="text-4xl font-bold text-red-500 mb-4">
+//                Course not found (Slug: {courseId})
+//             </h1>
+//             <p className="text-gray-400">
+//                The course identifier **{courseId}** does not match any entry in
+//                our course catalog. Please check the URL or return to the{' '}
+//                <Link
+//                   to="/courses"
+//                   className="text-academy-accent hover:underline"
+//                >
+//                   Courses Page
+//                </Link>
+//                .
+//             </p>
+//          </div>
+//       );
+//    }
+
+//    // --- Course Display Structure ---
+//    return (
+//       <div className="pt-24 min-h-screen bg-academy-bg text-white">
+//          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+//             {/* Header */}
+//             <header className="bg-gray-800 p-8 rounded-xl shadow-xl border border-gray-700">
+//                <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-3">
+//                   {course.title}
+//                </h1>
+//                <p className="text-xl text-gray-400">{course.description}</p>
+
+//                <div className="flex flex-wrap items-center mt-6 space-x-6 text-sm">
+//                   <div className="flex items-center space-x-2 text-academy-accent">
+//                      <Star className="w-5 h-5 fill-yellow-500 text-yellow-500" />
+//                      <span>
+//                         {course.rating} ({course.students} students)
+//                      </span>
+//                   </div>
+//                   <div className="flex items-center space-x-2 text-gray-400">
+//                      <Clock className="w-5 h-5" />
+//                      <span>{course.duration}</span>
+//                   </div>
+//                </div>
+
+//                <div className="mt-8 flex space-x-4">
+//                   <button className="px-8 py-3 bg-academy-accent text-gray-900 font-bold rounded-lg shadow-lg hover:bg-orange-500 transition duration-300">
+//                      Enroll Now - ${course.price}
+//                   </button>
+//                </div>
+//             </header>
+
+//             {/* Content Sections (Curriculum, etc.) */}
+//             <div className="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-10">
+//                {/* Course Content */}
+//                <div className="lg:col-span-2 space-y-10">
+//                   <section className="bg-gray-800 p-6 rounded-xl border border-gray-700">
+//                      <h2 className="text-3xl font-bold text-white mb-4 flex items-center space-x-2">
+//                         <LayoutList className="w-6 h-6 text-academy-accent" />
+//                         <span>
+//                            Course Curriculum ({course.modules.length} Modules)
+//                         </span>
+//                      </h2>
+//                      <ul className="space-y-3 mt-4">
+//                         {course.modules.map((module, index) => (
+//                            <li
+//                               key={index}
+//                               className="flex items-center p-3 bg-gray-700/50 rounded-lg"
+//                            >
+//                               <CheckCircle className="w-5 h-5 text-green-400 mr-3 flex-shrink-0" />
+//                               <span className="text-gray-300 font-medium">
+//                                  Module {index + 1}: {module}
+//                               </span>
+//                            </li>
+//                         ))}
+//                      </ul>
+//                   </section>
+//                </div>
+
+//                {/* Sidebar / Prerequisites */}
+//                <div className="lg:col-span-1">
+//                   <section className="sticky top-20 bg-gray-900 p-6 rounded-xl border border-academy-accent shadow-lg">
+//                      <h3 className="text-2xl font-bold text-academy-accent mb-4">
+//                         Prerequisites
+//                      </h3>
+//                      <ul className="list-disc list-inside text-gray-400 space-y-2">
+//                         {course.prerequisites.map((prereq, index) => (
+//                            <li key={index}>{prereq}</li>
+//                         ))}
+//                      </ul>
+//                   </section>
+//                </div>
+//             </div>
+//          </div>
+//       </div>
+//    );
+// };
+
+// export default CourseDetailPage;
+
+// import React, { useEffect, useState } from 'react';
+// import { useParams, Link } from 'react-router-dom';
+// import { Clock, Zap, Star, LayoutList, CheckCircle } from 'lucide-react';
+
+// // --- Centralized Course Data (SLUG MUST BE THE KEY and MATCH CoursesSection) ---
+// const sampleCourses = {
+//    // CRITICAL: Key must match the slug in CoursesSection and the URL parameter
+//    'react-nextjs': {
+//       title: 'Mastering React & Next.js',
+//       description:
+//          'Build scalable, high-performance web applications using the latest features of React, Hooks, and Next.js, focusing on server-side rendering and static generation.',
+//       instructor: 'Dr. Evelyn Reed',
+//       duration: '20 Hrs',
+//       rating: '4.9',
+//       students: '1.2K',
+//       price: 99.99,
+//       modules: [
+//          'Introduction to Modern React (v18+)',
+//          'React Hooks: useState, useEffect, useContext',
+//          'Advanced State Management (Zustand/Redux)',
+//          'Next.js Fundamentals (Pages & Routing)',
+//          'Server Components & Data Fetching',
+//          'Deployment and Performance Optimization',
+//       ],
+//       prerequisites: ['HTML', 'CSS', 'JavaScript ES6+'],
+//    },
+//    'data-science': {
+//       title: 'Data Science with Python',
+//       description:
+//          'Learn Python, Pandas, NumPy, and Scikit-learn to clean, analyze, and visualize complex datasets for machine learning applications.',
+//       instructor: 'Prof. Alistair Chen',
+//       duration: '35 Hrs',
+//       rating: '4.8',
+//       students: '850',
+//       price: 149.99,
+//       modules: [
+//          'Python Basics for Data Analysis',
+//          'Data Manipulation with Pandas',
+//          'Scientific Computing with NumPy',
+//          'Data Visualization (Matplotlib & Seaborn)',
+//          'Scientific Programming (Jupyter, VS Code)',
+//          'Introduction to Machine Learning (Scikit-learn)',
+//          'Model Evaluation and Deployment',
+//       ],
+//       prerequisites: ['Basic Math/Statistics'],
+//    },
+//    'full-stack-node-js': {
+//       title: 'Full-Stack Node.js Development',
+//       description:
+//          'Develop robust APIs and web servers using Node.js, Express, and MongoDB (MERN stack). Master authentication, testing, and deployment.',
+//       instructor: 'James Davidson',
+//       duration: '25 Hrs',
+//       rating: '4.7',
+//       students: '1.5K',
+//       price: 129.99,
+//       modules: [
+//          'Node.js and npm Essentials',
+//          'Building APIs with Express',
+//          'MongoDB and Mongoose ODM',
+//          'User Authentication (JWT)',
+//          'Testing APIs (Jest/Supertest)',
+//          'Deployment to Cloud Platforms',
+//       ],
+//       prerequisites: ['Advanced JavaScript (ES6+)'],
+//    },
+//    'advanced-typescript-mastery': {
+//       title: 'Advanced TypeScript Mastery',
+//       description:
+//          'Deep dive into TypeScript, covering advanced types, utility types, generics, and configuration for large-scale projects.',
+//       instructor: 'Dr. Evelyn Reed',
+//       duration: '15 Hrs',
+//       rating: '4.6',
+//       students: '1.8K',
+//       price: 79.99,
+//       modules: [
+//          'TypeScript Setup and Configuration',
+//          'Advanced Generics and Mapped Types',
+//          'Conditional and Utility Types',
+//          'Integrating with React/Node.js',
+//          'Handling Asynchronous TypeScript',
+//          'Design Patterns with TypeScript',
+//       ],
+//       prerequisites: ['JavaScript', 'Basic TypeScript'],
+//    },
+//    'cloud-fundamentals': {
+//       title: 'Cloud Fundamentals (AWS/Azure)',
+//       description:
+//          'Master core concepts of cloud computing, covering services from AWS (EC2, S3) and Azure (Virtual Machines, Storage).',
+//       instructor: 'Prof. Alistair Chen',
+//       duration: '10 Hrs',
+//       rating: '4.5',
+//       students: '2.1K',
+//       price: 59.99,
+//       modules: [
+//          'Introduction to Cloud Computing',
+//          'AWS Services (Compute, Storage, Networking)',
+//          'Azure Services (VMs, Storage Accounts)',
+//          'Security and Compliance in the Cloud',
+//          'Cost Management',
+//          'Serverless Architecture Concepts',
+//       ],
+//       prerequisites: ['Basic IT knowledge'],
+//    },
+// };
+
+// const CourseDetailPage = () => {
+//    // CRITICAL: Must use 'courseId' to match the route parameter /courses/:courseId
+//    const { courseId } = useParams();
+//    const [course, setCourse] = useState(null);
+//    const [loading, setLoading] = useState(true);
+
+//    useEffect(() => {
+//       // Fetch logic based on the URL parameter (courseId, which is the slug)
+//       setLoading(true);
+//       const foundCourse = sampleCourses[courseId];
+
+//       if (foundCourse) {
+//          setCourse(foundCourse);
+//       } else {
+//          setCourse(null);
+//       }
+//       setLoading(false);
+//    }, [courseId]);
+
+//    if (loading) {
+//       return (
+//          <div className="pt-24 min-h-screen text-center bg-academy-bg text-white">
+//             <p>Loading course details...</p>
+//          </div>
+//       );
+//    }
+
+//    if (!course) {
+//       return (
+//          <div className="pt-24 min-h-screen bg-academy-bg flex justify-center">
+//             <div className="max-w-3xl mx-auto p-8 bg-gray-900 rounded-xl shadow-2xl mt-12 border border-red-800">
+//                <h1 className="text-4xl font-bold text-red-500 mb-4">
+//                   Course Not Found (404)
+//                </h1>
+//                <p className="text-gray-400 text-lg">
+//                   We could not find a course matching the identifier:{' '}
+//                   <strong className="text-academy-accent">{courseId}</strong>.
+//                   Please ensure the URL is correct or return to the{' '}
+//                   <Link to="/courses" className="text-blue-400 hover:underline">
+//                      Full Catalog
+//                   </Link>
+//                   .
+//                </p>
+//             </div>
+//          </div>
+//       );
+//    }
+
+//    // --- Course Display Structure ---
+//    return (
+//       <div className="pt-24 min-h-screen bg-academy-bg text-white">
+//          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+//             {/* Header */}
+//             <header className="bg-gray-900 p-8 rounded-xl shadow-2xl border border-gray-700">
+//                <p className="text-sm font-semibold uppercase tracking-wider text-academy-accent mb-2">
+//                   {course.instructor} presents
+//                </p>
+//                <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-4 leading-tight">
+//                   {course.title}
+//                </h1>
+//                <p className="text-xl text-gray-400 max-w-4xl">
+//                   {course.description}
+//                </p>
+
+//                <div className="flex flex-wrap items-center mt-6 space-x-6 text-base">
+//                   <div className="flex items-center space-x-2 text-academy-accent">
+//                      <Star className="w-5 h-5 fill-yellow-500 text-yellow-500" />
+//                      <span>{course.rating} Rating</span>
+//                   </div>
+//                   <div className="flex items-center space-x-2 text-gray-400">
+//                      <Clock className="w-5 h-5" />
+//                      <span>{course.duration} Total Length</span>
+//                   </div>
+//                   <div className="flex items-center space-x-2 text-gray-400">
+//                      <Zap className="w-5 h-5 text-indigo-400" />
+//                      <span>{course.students} Learners</span>
+//                   </div>
+//                </div>
+
+//                <div className="mt-10 flex space-x-4">
+//                   <button className="px-10 py-3 bg-academy-accent text-gray-900 font-bold text-lg rounded-lg shadow-xl hover:bg-orange-500 transition duration-300 transform hover:scale-[1.02]">
+//                      Enroll Now for ${course.price}
+//                   </button>
+//                </div>
+//             </header>
+
+//             <div className="flex gap-3">
+//                <button
+//                   onClick={handleEnroll}
+//                   className="px-5 py-3 bg-orange-600 text-black font-semibold rounded-lg"
+//                >
+//                   Enroll / View Plans
+//                </button>
+//                <Link
+//                   to="/courses"
+//                   className="px-4 py-3 bg-gray-700 text-white rounded-md"
+//                >
+//                   Back to courses
+//                </Link>
+//             </div>
+
+//             {/* Content Sections (Curriculum, etc.) */}
+//             <div className="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-10">
+//                {/* Course Content */}
+//                <div className="lg:col-span-2 space-y-10">
+//                   <section className="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg">
+//                      <h2 className="text-3xl font-bold text-white mb-6 flex items-center space-x-2">
+//                         <LayoutList className="w-7 h-7 text-academy-accent" />
+//                         <span>Complete Curriculum</span>
+//                      </h2>
+//                      <ul className="space-y-4">
+//                         {course.modules.map((module, index) => (
+//                            <li
+//                               key={index}
+//                               className="flex items-start p-4 bg-gray-700/50 rounded-lg border border-gray-600 transition duration-150 hover:bg-gray-700/70"
+//                            >
+//                               <CheckCircle className="w-5 h-5 text-green-400 mt-1 mr-4 flex-shrink-0" />
+//                               <div className="flex flex-col">
+//                                  <span className="text-gray-300 font-semibold">
+//                                     Module {index + 1}:
+//                                  </span>
+//                                  <span className="text-white text-lg">
+//                                     {module}
+//                                  </span>
+//                               </div>
+//                            </li>
+//                         ))}
+//                      </ul>
+//                   </section>
+//                </div>
+
+//                {/* Sidebar / Prerequisites */}
+//                <div className="lg:col-span-1">
+//                   <section className="sticky top-20 bg-gray-900 p-6 rounded-xl border border-academy-accent shadow-2xl">
+//                      <h3 className="text-2xl font-bold text-academy-accent mb-4">
+//                         What You Need to Start
+//                      </h3>
+//                      <ul className="list-disc list-inside text-gray-400 space-y-3 pl-4">
+//                         {course.prerequisites.map((prereq, index) => (
+//                            <li key={index} className="text-lg">
+//                               {prereq}
+//                            </li>
+//                         ))}
+//                      </ul>
+//                      <p className="mt-6 text-sm text-gray-500">
+//                         If you don't meet these, check out our Learning Paths
+//                         for beginners!
+//                      </p>
+//                   </section>
+//                </div>
+//             </div>
+//          </div>
+//       </div>
+//    );
+// };
+
+// export default CourseDetailPage;
+
+// ===========================================
+// CRITICAL FIX: Ensure all necessary items are imported first.
+// ===========================================

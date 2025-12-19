@@ -1,0 +1,1051 @@
+import React from 'react';
+// We use the functional imports, expecting the Router context to be provided higher up (e.g., index.js)
+import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import {
+   Code,
+   Menu,
+   X,
+   DollarSign,
+   BookOpen,
+   Users,
+   Compass,
+   Home as HomeIcon,
+   Phone,
+   Award,
+} from 'lucide-react';
+import { useState, useEffect } from 'react';
+
+// --- CRITICAL CORRECTION: USING EXACT FILE PATHS AND NAMES ---
+// 1. Home Page (Resolves the error: './pages/Home' not found)
+//import HomePage from './pages/Home.js';
+
+// 2. Courses Page
+
+
+
+
+// 3. About Page
+import AboutPage from './pages/AboutPage.js';
+
+// 4. Learning Paths Page
+import LearningPathsPage from './pages/LearningPathsPage.js';
+
+// 5. Pricing Page (CRITICAL: Using the filename 'PricingAccessPage.js' if that's what you have)
+import PricingPage from './pages/PricingPage.js';
+
+// 6. Lifetime Access Page
+import LifetimeAccessPage from './pages/LifetimeAccessPage.js';
+
+// 7. Contact Page
+import ContactPage from './pages/Contact.js';
+
+import { useParams } from 'react-router-dom';
+
+// Placeholder for DetailedLearningPathPage
+const DetailedLearningPathPage = () => {
+   const { pathSlug } = useParams();
+   return (
+      <div className="min-h-screen bg-academy-bg pt-20 flex flex-col justify-center items-center text-center px-4">
+         <h1 className="text-5xl font-extrabold text-academy-accent mb-4">
+            Path Details:
+         </h1>
+         <p className="text-3xl text-white">
+            You are viewing the **{pathSlug}** roadmap.
+         </p>
+         <p className="text-xl text-gray-400 mt-4">
+            Detailed content and curriculum coming soon!
+         </p>
+      </div>
+   );
+};
+
+// --- Navbar Component (Handles routing and highlighting) ---
+const Navbar = ({ links }) => {
+   const [isOpen, setIsOpen] = useState(false);
+   const location = useLocation();
+
+   const toggleMenu = () => {
+      setIsOpen(!isOpen);
+   };
+
+   useEffect(() => {
+      // Close menu when route changes
+      setIsOpen(false);
+   }, [location]);
+
+   return (
+      <nav className="fixed w-full z-30 bg-gray-900/90 backdrop-blur-sm shadow-xl border-b border-gray-800">
+         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+               {/* Brand Logo and Name */}
+               <Link to="/" className="flex items-center space-x-2">
+                  <Code className="w-8 h-8 text-academy-accent" />
+                  <span className="text-2xl font-bold text-white">
+                     Davidson Tech Academy
+                  </span>
+               </Link>
+
+               {/* Desktop Menu - All navigation links */}
+               <div className="hidden md:flex items-center space-x-6">
+                  {links.map((link) => (
+                     <Link
+                        key={link.path}
+                        to={link.path}
+                        className={`text-sm font-medium transition duration-150 ease-in-out px-3 py-2 rounded-lg 
+                                    ${
+                                       location.pathname === link.path
+                                          ? 'text-academy-accent bg-gray-800 shadow-inner'
+                                          : 'text-gray-300 hover:text-white hover:bg-gray-800'
+                                    }`}
+                     >
+                        {link.name}
+                     </Link>
+                  ))}
+
+                  {/* Enrollment/Sign-In Button */}
+                  <Link
+                     to="/enroll"
+                     className="inline-flex items-center justify-center h-10 px-6 font-bold text-gray-900 bg-orange-600 rounded-lg hover:bg-orange-500 transition duration-300 shadow-lg ml-4"
+                  >
+                     Enroll / Sign In
+                  </Link>
+               </div>
+
+               {/* Mobile Menu Button */}
+               <div className="md:hidden flex items-center">
+                  <button
+                     onClick={toggleMenu}
+                     className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-academy-accent"
+                  >
+                     {isOpen ? (
+                        <X className="block h-6 w-6" />
+                     ) : (
+                        <Menu className="block h-6 w-6" />
+                     )}
+                  </button>
+               </div>
+            </div>
+         </div>
+
+         {/* Mobile Menu Content */}
+         {isOpen && (
+            <div className="md:hidden">
+               <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                  {links.map((link) => (
+                     <Link
+                        key={link.path}
+                        to={link.path}
+                        className={`block px-3 py-2 rounded-md text-base font-medium 
+                                    ${
+                                       location.pathname === link.path
+                                          ? 'text-academy-accent bg-gray-800'
+                                          : 'text-gray-300 hover:text-white hover:bg-gray-800'
+                                    }`}
+                     >
+                        {link.name}
+                     </Link>
+                  ))}
+                  <Link
+                     to="/enroll"
+                     className="block px-3 py-2 rounded-md text-base font-bold text-gray-900 bg-orange-600 hover:bg-orange-500 transition duration-300 mt-2"
+                  >
+                     Enroll / Sign In
+                  </Link>
+               </div>
+            </div>
+         )}
+      </nav>
+   );
+};
+
+// --- Footer Component ---
+const Footer = () => {
+   return (
+      <footer className="bg-gray-900 border-t border-gray-800 py-10">
+         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-400">
+            <div className="flex justify-center items-center space-x-2 mb-4">
+               <Code className="w-6 h-6 text-academy-accent" />
+               <p className="text-xl font-bold text-white">
+                  Davidson Tech Academy
+               </p>
+            </div>
+            <p className="text-sm">
+               &copy; {new Date().getFullYear()} Davidson Tech Academy. All
+               rights reserved.
+            </p>
+            <div className="flex justify-center space-x-4 mt-4 text-sm">
+               <Link
+                  to="/about"
+                  className="hover:text-academy-accent transition"
+               >
+                  About
+               </Link>
+               <Link
+                  to="/pricing"
+                  className="hover:text-academy-accent transition"
+               >
+                  Pricing
+               </Link>
+               <Link
+                  to="/contact"
+                  className="hover:text-academy-accent transition"
+               >
+                  Contact
+               </Link>
+            </div>
+         </div>
+      </footer>
+   );
+};
+
+// --- Main App Component ---
+function App() {
+   // Define all Navbar links
+   const navLinks = [
+      { name: 'Home', path: '/', icon: HomeIcon },
+      { name: 'Courses', path: '/courses', icon: BookOpen },
+      { name: 'Learning Paths', path: '/learning-paths', icon: Compass },
+      { name: 'About Us', path: '/about', icon: Users },
+      { name: 'Pricing', path: '/pricing', icon: DollarSign },
+      { name: 'Lifetime', path: 'a/lifetime', icon: Award },
+      { name: 'Contact', path: '/contact', icon: Phone },
+   ];
+
+   return (
+      <div className="min-h-screen bg-academy-bg flex flex-col">
+         <Navbar links={navLinks} />
+         <main className="flex-grow">
+            <Routes>
+               {/* <Route path="/" element={<HomePage />} /> */}
+               <Route path="/courses" element={<CoursesPage />} />
+               <Route path="/about" element={<AboutPage />} />
+
+               {/* Learning Paths Routes */}
+               <Route path="/learning-paths" element={<LearningPathsPage />} />
+               <Route
+                  path="/learning-paths/:pathSlug"
+                  element={<DetailedLearningPathPage />}
+               />
+
+               <Route path="/pricing" element={<PricingPage />} />
+               <Route path="/lifetime" element={<LifetimeAccessPage />} />
+               <Route path="/contact" element={<ContactPage />} />
+
+               {/* 404/Fallback Route */}
+               <Routea
+                  path="*"
+                  element={
+                     <div className="pt-20 text-center text-white text-3xl min-h-screen">
+                        404 | Page Not Found
+                     </div>
+                  }
+               />
+            </Routes>
+         </main>
+         <Footer />
+      </div>
+   );
+}
+
+export default App;
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////////////
+
+
+// Declare global variables to satisfy ESLint and the bundler,
+// indicating that these variables are provided by the hosting environment.
+/* global __app_id, __firebase_config, __initial_auth_token */
+
+import React, {
+   useState,
+   useEffect,
+   createContext,
+   useContext,
+   useCallback,
+} from 'react';
+// Reverting to standard NPM imports. The "Module not found" error means the Firebase dependencies are missing
+// but these are the correct paths for a standard React project.
+import { initializeApp } from 'firebase/app';
+import {
+   getAuth,
+   signInAnonymously,
+   signInWithCustomToken,
+   onAuthStateChanged,
+} from 'firebase/auth';
+import { getFirestore, doc, onSnapshot } from 'firebase/firestore';
+
+// Import local components and pages (mocked for single file context)
+const Navbar = ({ navigate, currency, setCurrency, isAuthReady, userId }) => {
+   const navItems = [
+      { name: 'Home', path: '/' },
+      { name: 'Courses', path: '/courses' },
+      { name: 'Pricing', path: '/pricing' },
+      { name: 'About Us', path: '/about' },
+   ];
+
+   return (
+      <header className="bg-gray-800 text-white shadow-lg sticky top-0 z-10">
+         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div
+               className="flex items-center space-x-2 cursor-pointer"
+               onClick={() => navigate('/')}
+            >
+               <svg
+                  className="w-8 h-8 text-orange-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+               >
+                  <path
+                     strokeLinecap="round"
+                     strokeLinejoin="round"
+                     strokeWidth="2"
+                     d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                  ></path>
+               </svg>
+               <span className="text-2xl font-bold">
+                  Davidson<span className="text-orange-400">Tech</span>Academy
+               </span>
+            </div>
+
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center space-x-6">
+               {navItems.map((item) => (
+                  <a
+                     key={item.name}
+                     href="#"
+                     onClick={(e) => {
+                        e.preventDefault();
+                        navigate(item.path);
+                     }}
+                     className="text-lg font-medium hover:text-orange-400 transition duration-150"
+                  >
+                     {item.name}
+                  </a>
+               ))}
+
+               {/* Currency Selector */}
+               <select
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value)}
+                  className="bg-gray-700 text-white rounded-md p-1 border border-gray-600 focus:ring-orange-400 focus:border-orange-400"
+               >
+                  <option value="USD">USD</option>
+                  <option value="EUR">EUR</option>
+                  <option value="GBP">GBP</option>
+                  <option value="JPY">JPY</option>
+               </select>
+
+               {/* User Status/Sign In Button */}
+               <button className="bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2 px-4 rounded-full shadow-md transition duration-150 ease-in-out">
+                  {isAuthReady
+                     ? userId
+                        ? 'User ID: ' + userId.substring(0, 8) + '...'
+                        : 'Sign In'
+                     : 'Loading...'}
+               </button>
+            </nav>
+         </div>
+      </header>
+   );
+};
+
+// Mock Pages
+const HomePage = ({ navigate }) => (
+   <div className="min-h-[80vh] flex items-center justify-center text-center bg-gray-900 text-white py-20">
+      <div className="max-w-4xl mx-auto px-4">
+         <h1 className="text-6xl font-extrabold mb-4">Davidson Tech Academy</h1>
+         <h2 className="text-5xl font-extrabold text-orange-400 mb-6">
+            Master Tech Skills and Land Your Dream Job.
+         </h2>
+         <p className="text-xl text-gray-300 mb-10">
+            Davidson Tech Academy offers project-based, professional courses in
+            Software Development, AI, and Data Science.
+         </p>
+         <button
+            onClick={() => navigate('/courses')}
+            className="bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-8 rounded-full text-xl shadow-2xl transition duration-300 transform hover:scale-105"
+         >
+            Explore All Programs
+         </button>
+      </div>
+   </div>
+);
+
+const PricingPage = () => {
+   const { currency, conversionRate, isLoading, error } = useCurrencyContext();
+   const basePriceUSD = 499; // Base price in USD
+
+   const convertedPrice = (basePriceUSD * conversionRate).toFixed(2);
+
+   return (
+      <div className="min-h-[80vh] flex flex-col items-center p-8 bg-white">
+         <div className="text-center mb-10">
+            <h2 className="text-4xl font-bold text-gray-800 mb-2">
+               Flexible Pricing
+            </h2>
+            <p className="text-xl text-gray-600">
+               Choose the path that fits your goals.
+            </p>
+         </div>
+
+         <div className="w-full max-w-sm bg-gray-50 border border-gray-200 rounded-xl shadow-lg p-6">
+            <h3 className="text-2xl font-semibold mb-4 text-center text-gray-700">
+               Full Access Program
+            </h3>
+
+            {isLoading ? (
+               <div className="text-center text-indigo-600 font-medium">
+                  Loading currency rates...
+               </div>
+            ) : error ? (
+               <div className="text-center text-red-600 font-medium">
+                  Error fetching rates: {error}
+               </div>
+            ) : (
+               <div className="text-center my-6">
+                  <span className="text-5xl font-extrabold text-indigo-600">
+                     {currency === 'USD' ? '$' : currency} {convertedPrice}
+                  </span>
+                  <p className="text-gray-500 mt-1">
+                     {currency === 'USD'
+                        ? 'One-time payment'
+                        : `(Based on USD $${basePriceUSD})`}
+                  </p>
+               </div>
+            )}
+
+            <ul className="space-y-3 text-gray-600 mt-6">
+               <li className="flex items-center">
+                  <svg
+                     className="w-5 h-5 text-green-500 mr-2"
+                     fill="none"
+                     stroke="currentColor"
+                     viewBox="0 0 24 24"
+                     xmlns="http://www.w3.org/2000/svg"
+                  >
+                     <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M5 13l4 4L19 7"
+                     ></path>
+                  </svg>
+                  All Course Content
+               </li>
+               <li className="flex items-center">
+                  <svg
+                     className="w-5 h-5 text-green-500 mr-2"
+                     fill="none"
+                     stroke="currentColor"
+                     viewBox="0 0 24 24"
+                     xmlns="http://www.w3.org/2000/svg"
+                  >
+                     <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M5 13l4 4L19 7"
+                     ></path>
+                  </svg>
+                  Lifetime updates
+               </li>
+               <li className="flex items-center">
+                  <svg
+                     className="w-5 h-5 text-green-500 mr-2"
+                     fill="none"
+                     stroke="currentColor"
+                     viewBox="0 0 24 24"
+                     xmlns="http://www.w3.org/2001/svg"
+                  >
+                     <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M5 13l4 4L19 7"
+                     ></path>
+                  </svg>
+                  Certificate of Completion
+               </li>
+            </ul>
+            <button className="w-full mt-8 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg transition duration-150">
+               Enroll Now
+            </button>
+         </div>
+      </div>
+   );
+};
+
+const AboutPage = () => (
+   <div className="min-h-[80vh] p-8 bg-gray-100 text-gray-800">
+      <h2 className="text-4xl font-bold mb-4 text-center">
+         About Davidson Tech Academy
+      </h2>
+      <p className="max-w-3xl mx-auto text-lg text-gray-600">
+         We are dedicated to providing project-based, practical training that
+         leads directly to career success. Our mission is to bridge the gap
+         between academic knowledge and real-world industry demands.
+      </p>
+   </div>
+);
+const CoursesPage = () => (
+   <div className="min-h-[80vh] p-8 bg-gray-100 text-gray-800">
+      <h2 className="text-4xl font-bold mb-4 text-center">Our Courses</h2>
+      <p className="max-w-3xl mx-auto text-lg text-gray-600">
+         Explore our professional learning paths in Full-Stack Development, Data
+         Science, and Machine Learning.
+      </p>
+   </div>
+);
+const NotFound = () => (
+   <div className="min-h-[80vh] flex items-center justify-center p-8 bg-white">
+      <h2 className="text-4xl font-bold text-red-600">404 - Page Not Found</h2>
+   </div>
+);
+
+const Footer = () => (
+   <footer className="bg-gray-800 text-gray-400 py-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div>
+               <h3 className="text-lg font-bold text-white mb-4">Academy</h3>
+               <ul className="space-y-2">
+                  <li>
+                     <a href="#" className="hover:text-orange-400">
+                        About Us
+                     </a>
+                  </li>
+                  <li>
+                     <a href="#" className="hover:text-orange-400">
+                        Careers
+                     </a>
+                  </li>
+                  <li>
+                     <a href="#" className="hover:text-orange-400">
+                        Blog
+                     </a>
+                  </li>
+               </ul>
+            </div>
+            <div>
+               <h3 className="text-lg font-bold text-white mb-4">Products</h3>
+               <ul className="space-y-2">
+                  <li>
+                     <a href="#" className="hover:text-orange-400">
+                        Courses
+                     </a>
+                  </li>
+                  <li>
+                     <a href="#" className="hover:text-orange-400">
+                        Learning Paths
+                     </a>
+                  </li>
+                  <li>
+                     <a href="#" className="hover:text-orange-400">
+                        Pricing
+                     </a>
+                  </li>
+               </ul>
+            </div>
+            <div>
+               <h3 className="text-lg font-bold text-white mb-4">Support</h3>
+               <ul className="space-y-2">
+                  <li>
+                     <a href="#" className="hover:text-orange-400">
+                        FAQ
+                     </a>
+                  </li>
+                  <li>
+                     <a href="#" className="hover:text-orange-400">
+                        Contact
+                     </a>
+                  </li>
+                  <li>
+                     <a href="#" className="hover:text-orange-400">
+                        Privacy
+                     </a>
+                  </li>
+               </ul>
+            </div>
+            <div className="col-span-2 md:col-span-1">
+               <h3 className="text-2xl font-bold text-orange-400 mb-4">
+                  DavidsonTech
+               </h3>
+               <p className="text-sm">Master the tech skills that matter.</p>
+            </div>
+         </div>
+         <div className="mt-8 pt-6 border-t border-gray-700 text-center text-sm">
+            &copy; {new Date().getFullYear()} Davidson Tech Academy. All rights
+            reserved.
+         </div>
+      </div>
+   </footer>
+);
+
+// ----------------------------------------------------------------------
+// FIREBASE & CURRENCY CONTEXT
+// ----------------------------------------------------------------------
+
+// 1. Context Setup
+const CurrencyContext = createContext();
+export const useCurrencyContext = () => useContext(CurrencyContext);
+
+// 2. Custom Hook for Dynamic Currency Rates
+const useDynamicCurrency = (db, currency, isAuthReady, appId) => {
+   const [conversionRate, setConversionRate] = useState(1.0); // Default to 1.0 (USD)
+   const [isLoading, setIsLoading] = useState(false);
+   const [error, setError] = useState(null);
+
+   // This effect handles real-time rate fetching whenever the currency or auth status changes.
+   useEffect(() => {
+      if (!db || !isAuthReady || !appId) {
+         // Cannot run query until Firebase is initialized and auth is ready
+         return;
+      }
+
+      const fetchRates = async () => {
+         setIsLoading(true);
+         setError(null);
+
+         // The appId variable must be used to construct the public collection path
+         const collectionPath = `artifacts/${appId}/public/data/currency_rates`;
+
+         // Note: We use the currency code as the document ID for efficiency
+         const rateDocRef = doc(db, collectionPath, currency);
+
+         // Set up real-time listener
+         const unsubscribe = onSnapshot(
+            rateDocRef,
+            (docSnap) => {
+               if (docSnap.exists()) {
+                  const data = docSnap.data();
+                  const rate = data.rate || 1.0;
+                  setConversionRate(rate);
+                  setError(null);
+               } else {
+                  // Fallback if rate document doesn't exist (e.g., EUR/USD/GBP/JPY is missing)
+                  console.warn(
+                     `Currency rate document for ${currency} not found. Defaulting to 1.0.`
+                  );
+                  setConversionRate(1.0);
+                  setError(`Rate for ${currency} not available.`);
+               }
+               setIsLoading(false);
+            },
+            (err) => {
+               // Handle Firebase errors
+               console.error('Firestore onSnapshot failed:', err);
+               setError(`Failed to fetch rates: ${err.message}`);
+               setConversionRate(1.0);
+               setIsLoading(false);
+            }
+         );
+
+         // Cleanup function for the real-time listener
+         return () => unsubscribe();
+      };
+
+      // Fetch rates only if the target currency is not USD (since USD rate is always 1.0)
+      if (currency !== 'USD') {
+         fetchRates();
+      } else {
+         setConversionRate(1.0);
+         setIsLoading(false);
+         setError(null);
+      }
+   }, [db, currency, isAuthReady, appId]); // Added appId to dependencies
+
+   return { conversionRate, isLoading, error };
+};
+
+// ----------------------------------------------------------------------
+// MAIN APP COMPONENT
+// ----------------------------------------------------------------------
+
+const App = () => {
+   // Environment Variable Access - Consolidated and simplified
+   const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+   const firebaseConfig =
+      typeof __firebase_config !== 'undefined'
+         ? JSON.parse(__firebase_config)
+         : {};
+   const initialAuthToken =
+      typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+   const [db, setDb] = useState(null);
+   const [auth, setAuth] = useState(null);
+   const [userId, setUserId] = useState(null);
+   const [isAuthReady, setIsAuthReady] = useState(false);
+   const [currentPath, setCurrentPath] = useState('/');
+   const [currency, setCurrency] = useState('USD');
+
+   // Pass appId to the hook that needs it for path construction
+   const { conversionRate, isLoading, error } = useDynamicCurrency(
+      db,
+      currency,
+      isAuthReady,
+      appId
+   );
+
+   // 1. Firebase Initialization and Authentication
+   useEffect(() => {
+      let authInstance;
+
+      try {
+         if (Object.keys(firebaseConfig).length > 0) {
+            // Initialize Firebase services using the imported methods
+            const appInstance = initializeApp(firebaseConfig);
+            const dbInstance = getFirestore(appInstance);
+            authInstance = getAuth(appInstance);
+            setDb(dbInstance);
+            setAuth(authInstance);
+
+            // Sign-in logic
+            const attemptAuth = async () => {
+               try {
+                  if (initialAuthToken) {
+                     await signInWithCustomToken(
+                        authInstance,
+                        initialAuthToken
+                     );
+                  } else {
+                     await signInAnonymously(authInstance);
+                  }
+               } catch (e) {
+                 // console.error('Firebase Sign-In Failed:', e);
+               }
+            };
+            attemptAuth();
+         } else {
+            console.warn(
+               'Firebase config not available. Running in mock mode.'
+            );
+            setIsAuthReady(true);
+         }
+      } catch (e) {
+         console.error('Firebase initialization failed:', e);
+      }
+
+      // Auth state listener
+      const unsubscribe = authInstance
+         ? onAuthStateChanged(authInstance, (user) => {
+              setUserId(user ? user.uid : null);
+              setIsAuthReady(true);
+           })
+         : () => {};
+
+      // Cleanup
+      return () => unsubscribe();
+   }, [initialAuthToken, JSON.stringify(firebaseConfig)]); // Used JSON.stringify for object comparison in dependency array
+
+   // Simple routing function
+   const navigate = useCallback((path) => {
+      setCurrentPath(path);
+      window.scrollTo(0, 0); // Scroll to top on navigation
+   }, []);
+
+   // 2. Render the page based on the current path
+   const renderPage = () => {
+      switch (currentPath) {
+         case '/':
+            return <HomePage navigate={navigate} />;
+         case '/courses':
+            return <CoursesPage />;
+         case '/pricing':
+            return <PricingPage />;
+         case '/about':
+            return <AboutPage />;
+         default:
+            return <NotFound />;
+      }
+   };
+
+   const currencyContextValue = {
+      currency,
+      conversionRate,
+      isLoading,
+      error,
+   };
+
+   return (
+      <CurrencyContext.Provider value={currencyContextValue}>
+         <div className="flex flex-col min-h-screen bg-white font-inter">
+            <Navbar
+               navigate={navigate}
+               currency={currency}
+               setCurrency={setCurrency}
+               isAuthReady={isAuthReady}
+               userId={userId}
+            />
+            <main className="flex-grow">{renderPage()}</main>
+            <Footer />
+         </div>
+      </CurrencyContext.Provider>
+   );
+};
+
+export default App;
+
+
+////////////////////////////////////////////////////////////////////
+import React from 'react';
+// We use the functional imports, expecting the Router context to be provided higher up (e.g., index.js)
+import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import {
+   Code,
+   Menu,
+   X,
+   DollarSign,
+   BookOpen,
+   Users,
+   Compass,
+   Home as HomeIcon,
+   Phone,
+   Award,
+} from 'lucide-react';
+import { useState, useEffect } from 'react';
+
+// --- CRITICAL CORRECTION: USING EXACT FILE PATHS AND NAMES ---
+// 1. Home Page (Resolves the error: './pages/Home' not found)
+//import HomePage from './pages/Home.js';
+
+// 2. Courses Page
+
+// 3. About Page
+import AboutPage from './pages/AboutPage.js';
+import CoursesPage from './pages/CoursesPage.js';
+
+
+// 4. Learning Paths Page
+import LearningPathsPage from './pages/LearningPathsPage.js';
+
+// 5. Pricing Page (CRITICAL: Using the filename 'PricingAccessPage.js' if that's what you have)
+import PricingPage from './pages/PricingPage.js';
+
+// 6. Lifetime Access Page
+import LifetimeAccessPage from './pages/LifetimeAccessPage.js';
+
+// 7. Contact Page
+import ContactPage from './pages/Contact.js';
+
+import { useParams } from 'react-router-dom';
+
+// Placeholder for DetailedLearningPathPage
+const DetailedLearningPathPage = () => {
+   const { pathSlug } = useParams();
+   return (
+      <div className="min-h-screen bg-academy-bg pt-20 flex flex-col justify-center items-center text-center px-4">
+         <h1 className="text-5xl font-extrabold text-academy-accent mb-4">
+            Path Details:
+         </h1>
+         <p className="text-3xl text-white">
+            You are viewing the **{pathSlug}** roadmap.
+         </p>
+         <p className="text-xl text-gray-400 mt-4">
+            Detailed content and curriculum coming soon!
+         </p>
+      </div>
+   );
+};
+
+// --- Navbar Component (Handles routing and highlighting) ---
+const Navbar = ({ links }) => {
+   const [isOpen, setIsOpen] = useState(false);
+   const location = useLocation();
+
+   const toggleMenu = () => {
+      setIsOpen(!isOpen);
+   };
+
+   useEffect(() => {
+      // Close menu when route changes
+      setIsOpen(false);
+   }, [location]);
+
+   return (
+      <nav className="fixed w-full z-30 bg-gray-900/90 backdrop-blur-sm shadow-xl border-b border-gray-800">
+         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+               {/* Brand Logo and Name */}
+               <Link to="/" className="flex items-center space-x-2">
+                  <Code className="w-8 h-8 text-academy-accent" />
+                  <span className="text-2xl font-bold text-white">
+                     Davidson Tech Academy
+                  </span>
+               </Link>
+
+               {/* Desktop Menu - All navigation links */}
+               <div className="hidden md:flex items-center space-x-6">
+                  {links.map((link) => (
+                     <Link
+                        key={link.path}
+                        to={link.path}
+                        className={`text-sm font-medium transition duration-150 ease-in-out px-3 py-2 rounded-lg 
+                                    ${
+                                       location.pathname === link.path
+                                          ? 'text-academy-accent bg-gray-800 shadow-inner'
+                                          : 'text-gray-300 hover:text-white hover:bg-gray-800'
+                                    }`}
+                     >
+                        {link.name}
+                     </Link>
+                  ))}
+
+                  {/* Enrollment/Sign-In Button */}
+                  <Link
+                     to="/enroll"
+                     className="inline-flex items-center justify-center h-10 px-6 font-bold text-gray-900 bg-orange-600 rounded-lg hover:bg-orange-500 transition duration-300 shadow-lg ml-4"
+                  >
+                     Enroll / Sign In
+                  </Link>
+               </div>
+
+               {/* Mobile Menu Button */}
+               <div className="md:hidden flex items-center">
+                  <button
+                     onClick={toggleMenu}
+                     className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-academy-accent"
+                  >
+                     {isOpen ? (
+                        <X className="block h-6 w-6" />
+                     ) : (
+                        <Menu className="block h-6 w-6" />
+                     )}
+                  </button>
+               </div>
+            </div>
+         </div>
+
+         {/* Mobile Menu Content */}
+         {isOpen && (
+            <div className="md:hidden">
+               <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                  {links.map((link) => (
+                     <Link
+                        key={link.path}
+                        to={link.path}
+                        className={`block px-3 py-2 rounded-md text-base font-medium 
+                                    ${
+                                       location.pathname === link.path
+                                          ? 'text-academy-accent bg-gray-800'
+                                          : 'text-gray-300 hover:text-white hover:bg-gray-800'
+                                    }`}
+                     >
+                        {link.name}
+                     </Link>
+                  ))}
+                  <Link
+                     to="/enroll"
+                     className="block px-3 py-2 rounded-md text-base font-bold text-gray-900 bg-orange-600 hover:bg-orange-500 transition duration-300 mt-2"
+                  >
+                     Enroll / Sign In
+                  </Link>
+               </div>
+            </div>
+         )}
+      </nav>
+   );
+};
+
+// --- Footer Component ---
+const Footer = () => {
+   return (
+      <footer className="bg-gray-900 border-t border-gray-800 py-10">
+         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-400">
+            <div className="flex justify-center items-center space-x-2 mb-4">
+               <Code className="w-6 h-6 text-academy-accent" />
+               <p className="text-xl font-bold text-white">
+                  Davidson Tech Academy
+               </p>
+            </div>
+            <p className="text-sm">
+               &copy; {new Date().getFullYear()} Davidson Tech Academy. All
+               rights reserved.
+            </p>
+            <div className="flex justify-center space-x-4 mt-4 text-sm">
+               <Link
+                  to="/about"
+                  className="hover:text-academy-accent transition"
+               >
+                  About
+               </Link>
+               <Link
+                  to="/pricing"
+                  className="hover:text-academy-accent transition"
+               >
+                  Pricing
+               </Link>
+               <Link
+                  to="/contact"
+                  className="hover:text-academy-accent transition"
+               >
+                  Contact
+               </Link>
+            </div>
+         </div>
+      </footer>
+   );
+};
+
+// --- Main App Component ---
+function App() {
+   // Define all Navbar links
+   const navLinks = [
+      { name: 'Home', path: '/', icon: HomeIcon },
+      { name: 'Courses', path: '/courses', icon: BookOpen },
+      { name: 'Learning Paths', path: '/learning-paths', icon: Compass },
+      { name: 'About Us', path: '/about', icon: Users },
+      { name: 'Pricing', path: '/pricing', icon: DollarSign },
+      { name: 'Lifetime', path: 'a/lifetime', icon: Award },
+      { name: 'Contact', path: '/contact', icon: Phone },
+   ];
+
+   return (
+      <div className="min-h-screen bg-academy-bg flex flex-col">
+         <Navbar links={navLinks} />
+         <main className="flex-grow">
+            <Routes>
+               {/* <Route path="/" element={<HomePage />} /> */}
+               { <Route path="/courses" element={<CoursesPage />} /> }
+                 <Route path="/about" element={<AboutPage />} />
+
+               {/* Learning Paths Routes */}
+               <Route path="/learning-paths" element={<LearningPathsPage />} />
+               <Route
+                  path="/learning-paths/:pathSlug"
+                  element={<DetailedLearningPathPage />}
+               />
+               <Route
+                  path="/lifetimeAccess/:pathSlug"
+                  element={<DetailedLearningPathPage />}
+               />
+
+               <Route path="/pricing" element={<PricingPage />} />
+               <Route path="/lifetime" element={<LifetimeAccessPage />} />
+               <Route path="/contact" element={<ContactPage />} />
+
+               {/* 404/Fallback Route */}
+               <Route
+                  path="*"
+                  element={
+                     <div className="pt-20 text-center text-white text-3xl min-h-screen">
+                        404 | Page Not Found
+                     </div>
+                  }
+               />
+            </Routes>
+         </main>
+         <Footer />
+      </div>
+   );
+}
+
+export default App;
